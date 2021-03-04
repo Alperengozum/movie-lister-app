@@ -11,10 +11,8 @@ function MovieTable() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [visibleNewMovieDrawer, setNewVisibleNewMovieDrawer] = useState("");
-  const [highestId, setHighestId] = useState(1);
 
   const [newMovie, setNewMovie] = useState({
-    id: null,
     movieName: null,
     rate: 0,
     releaseYear: 2021,
@@ -79,7 +77,7 @@ function MovieTable() {
       key: "rate",
       sorter: {
         /* Sıralama çalışmıyor Rate FIXED */
-        compare: (a, b) =>a.rate - b.rate,
+        compare: (a, b) => a.rate - b.rate,
         multiple: 3,
       },
       render: rate => (<Rate disabled defaultValue={rate}/>)
@@ -198,27 +196,29 @@ function MovieTable() {
 
 
   }
-  function createNewIdNumber(){
-    let idTestArray=[];
-    // eslint-disable-next-line array-callback-return
-    movieList.map( (movie) =>
-      {idTestArray.push(movie.id)}
-    );
-    setHighestId(Math.max(...idTestArray)+1)
-    return (highestId)
+
+  function createNewIdNumber() {
+
+
+
   }
 
-
-  function saveNewMovie(e) {
+  function saveNewMovieLastTime() {
     /* Kontrol eklenecek movieList state i ile */
-    setNewMovie({...newMovie,id: createNewIdNumber() })
-    console.log(newMovie.id)
+    console.log(newMovie)
     api.createMovie(newMovie.id, newMovie.movieName, newMovie.rate, newMovie.releaseYear, newMovie.type, newMovie.details).then(
       r => {
         console.log("new movie added in our database")
       }).catch(error => {
       console.log("one error happened:", error.message)
     })
+  }
+
+
+  function saveNewMovie() {
+    /* Kontrol eklenecek movieList state i ile */
+    createNewIdNumber();
+    saveNewMovieLastTime();
   }
 
 
@@ -244,8 +244,15 @@ function MovieTable() {
         movie.key = movie.id + movie.movieName;
         return movie
 
+      }
+      );
+      setMovieList(newMovieList);
+      let newID = newMovieList.length + 1;
+      setNewMovie({
+        id: newID,
+        releaseYear: 2021
       })
-      setMovieList(newMovieList)
+
     })
     /*MovieTable için veriler çekilecek */
 
@@ -316,7 +323,7 @@ function MovieTable() {
             </Form.Item>
             <Form.Item noStyle={true}>
               <Button className="newMovieSaveButtonClass" type="primary" shape="round" size={"Medium"}
-                      onClick={(e) => saveNewMovie(e)}> Save </Button>
+                      onClick={() => saveNewMovie()}> Save </Button>
             </Form.Item>
           </Form>
 

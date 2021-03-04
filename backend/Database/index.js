@@ -57,7 +57,9 @@ server.post("/movie/create/", (req, res) => {
       if (movieR) {
         res.status(400).json({message: "This movie is already exist."})
       } else {Movie.findOne({id:movie.id},{}, (error,movieR)=> {
-        if (error) {
+        if (movieR) {
+          console.log(movieR)
+          /* bu error u kullanma! */
           /* Bu id database de var bundan dolayı yeni bir id ataması yapabiliriz */
             console.log("Id is not well")
         } else {
