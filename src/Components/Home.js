@@ -3,9 +3,7 @@ import MovieTable from "./MovieTable";
 
 function Home() {
   return (
-    <div>
       <MovieTable/>
-    </div>
   );
 }
 

@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Space, Rate, Input, Button, Drawer, InputNumber, Form} from 'antd';
+import {Table, Space, Rate, Input, Button, Drawer, InputNumber, Form, message} from 'antd';
 import Highlighter from 'react-highlight-words';
 import {SearchOutlined} from '@ant-design/icons';
 import api from "./api/api";
 import "./tableClass.css"
+
+const {TextArea} = Input;
 
 
 function MovieTable() {
@@ -18,10 +20,8 @@ function MovieTable() {
     releaseYear: 2021,
     type: null,
     details: null,
-
-
   });
-  const {TextArea} = Input;
+
   const layout = {
     labelCol: {
       span: 16,
@@ -30,12 +30,14 @@ function MovieTable() {
       span: 160,
     },
   };
+
   const columns = [
     {
       title: "Movie ",
       dataIndex: "movieName",
       key: "movieName",
-      ...getColumnSearchProps('movieName')
+      ...getColumnSearchProps('movieName'),
+      sorter: (a, b) => a.length > b.length
     },
     {
       title: "Release Date ",
@@ -197,27 +199,24 @@ function MovieTable() {
 
   }
 
-  function createNewIdNumber() {
-
-
-
-  }
 
   function saveNewMovieLastTime() {
     /* Kontrol eklenecek movieList state i ile */
     console.log(newMovie)
-    api.createMovie(newMovie.id, newMovie.movieName, newMovie.rate, newMovie.releaseYear, newMovie.type, newMovie.details).then(
-      r => {
-        console.log("new movie added in our database")
-      }).catch(error => {
-      console.log("one error happened:", error.message)
-    })
+    api.createMovie(newMovie.movieName, newMovie.rate, newMovie.releaseYear, newMovie.type, newMovie.details)
+      .then(r => {
+        console.log("new movie added in our Database")
+      })
+      .catch(error => {
+        message.error("There is an error happened");
+        console.log("one error happened:", error.message)
+      })
   }
 
 
   function saveNewMovie() {
     /* Kontrol eklenecek movieList state i ile */
-    createNewIdNumber();
+
     saveNewMovieLastTime();
   }
 
@@ -236,20 +235,17 @@ function MovieTable() {
   useEffect(() => {
     api.getMovies().then((r) => {
       const newMovieList = r.data.movies.map((movie, index) => {
-        /*return {
-          ...movie,
-          key: index
+          /*return {
+            ...movie,
+            key: index
+          }
+          movie.key= movie.movieName+index */
+          movie.key = movie.id + movie.movieName;
+          return movie
         }
-        movie.key= movie.movieName+index */
-        movie.key = movie.id + movie.movieName;
-        return movie
-
-      }
       );
       setMovieList(newMovieList);
-      let newID = newMovieList.length + 1;
       setNewMovie({
-        id: newID,
         releaseYear: 2021
       })
 
