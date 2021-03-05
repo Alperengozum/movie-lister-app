@@ -193,6 +193,7 @@ function MovieTable() {
         setNewMovie({...newMovie, movieName: e.target.value})
         break;
       default:
+        message.error("it comes correctly but not in case")
         console.log(e.target.value, processName, "it comes correctly but not in case")
     }
 

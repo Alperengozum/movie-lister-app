@@ -61,11 +61,14 @@ server.post("/movie/create/", async (req, res) => {
   const movie = req.body;
   try {
     if (movie.releaseYear != null && movie.movieName != null && movie.type != null) {
-      await Movie.findOne({movieName: movie.movieName}, {}, async (error, movieR) => {
+      await Movie.findOne({movieName: movie.movieName}, {}, async(error, movieR) => {
         if (movieR) {
           res.status(400).json({message: "This movie is already exist."})
         } else {
-          await Movie.findOne({id: movie.id});
+          const sameIdMovie =Movie.findOne({id: movie.id});
+          if (sameIdMovie){
+            throw new Error("This ID is already exist")
+          }
           const newMovie = new Movie();
           await newMovie.id = Movie.count({}) + 1;
           if (!(movie.releaseYear > 1900 && movie.releaseYear < moment().add({year: 3}).year())) {
